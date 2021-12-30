@@ -3,7 +3,7 @@
 require_once __DIR__.'/../vendor/autoload.php';
 
 try {
-    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__.'/../');
     $dotenv->safeLoad();
 } catch (Dotenv\Exception\InvalidPathException $e) {
     //
@@ -91,6 +91,7 @@ $app->singleton(
  $app->register(App\Providers\AuthServiceProvider::class);
  $app->register(\Laravel\Passport\PassportServiceProvider::class);
  $app->register(\Dusterio\LumenPassport\PassportServiceProvider::class);
+ $app->register(Flipbox\LumenGenerator\LumenGeneratorServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------

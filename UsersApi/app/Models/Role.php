@@ -8,23 +8,22 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 
-class User extends Model
+class Role extends Model
 {
-
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'lastName', 'firstName', 'password', 'gender', 'country', 'email', 'phone',
+        'title'
     ];
 
     /**
-     * The roles that belong to the user.
+     * The users that belong to the role.
      */
-    public function roles()
+    public function users()
     {
-        return $this->belongsToMany(Role::class);
+        return $this->belongsToMany(User::class);
     }
 }

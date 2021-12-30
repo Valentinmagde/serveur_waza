@@ -13,15 +13,18 @@ class CreateAuthorsTable extends Migration
      */
     public function up()
     {
-        Schema::create('courses', function (Blueprint $table) {
+        Schema::create('users', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('lastName');
-            $table->string('firstName');
+            $table->string('lastName', 255);
+            $table->string('firstName', 255);
+            $table->string('userName', 255);
             $table->string('gender', 20);
-            $table->string('country');
-            $table->string('password');
-            $table->string('email');
-            $table->string('phone');
+            $table->string('country', 20);
+            $table->string('password', 255);
+            $table->string('email', 255)->nullable();
+            $table->string('phone', 32)->nullable();
+            $table->string('avatar', 255)->nullable();
+            $table->string('class', 255)->nullable();
             $table->timestamps();
         });
     }
