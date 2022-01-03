@@ -11,9 +11,17 @@
 |
 */
 
-$router->get('/courses', 'Course\CourseController@index');
-$router->post('/courses', 'Course\CourseController@store');
-$router->get('/course/{courseId}', 'Course\CourseController@show');
-$router->put('/course/{courseId}', 'Course\CourseController@update');
-$router->patch('/course/{courseId}', 'Course\CourseController@update');
-$router->delete('/course/{courseId}', 'Course\CourseController@destroy');
+$router->group(['prefix' => 'api'], function () use ($router) {
+
+    $router->group(['prefix' => 'courses'], function () use ($router) {
+        $router->get('/', ['uses' => 'Course\CourseController@index']);
+        $router->post('/', ['uses' => 'Course\CourseController@store']);
+    });
+    
+    $router->group(['prefix' => 'user'], function () use ($router) {
+        $router->get('/{courseId}', ['uses' => 'Course\CourseController@show']);
+        $router->put('/{courseId}', ['uses' => 'Course\CourseController@update']);
+        $router->patch('/{courseId}', ['uses' => 'Course\CourseController@update']);
+        $router->delete('/{courseId}', ['uses' => 'Course\CourseController@destroy']);
+    });
+});

@@ -15,7 +15,7 @@ class CourseService
     public $baseUri;
 
     /**
-     * Authorization secret to pass to book api
+     * Authorization secret to pass to course api
      * @var string
      */
     public $secret;
@@ -32,23 +32,23 @@ class CourseService
         return $this->performRequest('GET', '/courses');
     }
 
-    public function createBook($data)
+    public function createcourse($data)
     {
         return $this->performRequest('POST', '/courses', $data);
     }
 
-    public function obtainBook($book)
+    public function obtaincourse($course)
     {
-        return $this->performRequest('GET', "/courses/{$book}");
+        return $this->performRequest('GET', "/course/{$course}");
     }
 
-    public function editBook($data, $book)
+    public function editcourse($data, $course)
     {
-        return $this->performRequest('PUT', "/courses/{$book}", $data);
+        return $this->performRequest('PUT', "/course/{$course}", $data);
     }
 
-    public function deleteBook($book)
+    public function deletecourse($course)
     {
-        return $this->performRequest('DELETE', "/courses/{$book}");
+        return $this->performRequest('DELETE', "/course/{$course}");
     }
 }

@@ -3,9 +3,8 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Http\Response;
 
-class AuthenticateAccessMiddleware
+class CorsMiddleware
 {
     /**
      * Handle an incoming request.

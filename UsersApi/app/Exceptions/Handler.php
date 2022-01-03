@@ -50,9 +50,9 @@ class Handler extends ExceptionHandler
     public function render($request, Throwable $exception)
     {
         if ($exception instanceof ValidationException) {
-            $code = $exception->getStatusCode();
-            $message = Response::$statusTexts[$code];
-            return $this->errorResponse($message, $code);
+            $errors = $exception->validator->errors()->getMessages();
+
+            return $this->errorResponse($errors, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         // If Model Not found (e.g: not existing user error)

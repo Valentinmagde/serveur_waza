@@ -18,7 +18,7 @@ class UserController extends Controller
      */
     public $userService;
 
-    public function __construct(userService $userService)
+    public function __construct(UserService $userService)
     {
         $this->userService = $userService;
     }
@@ -44,7 +44,17 @@ class UserController extends Controller
         return $this->successResponse($this->userService->createuser($request->all()));
     }
 
-
+    /**
+     * Log in user
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function login(Request $request)
+    {
+        return $this->successResponse($this->userService->login($request->all()));
+    }
+    
     /**
      * Show a single user details
      * @param $user

@@ -8,6 +8,7 @@ use App\Traits\ApiResponser;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
+
 class UserController extends Controller
 {
     use ApiResponser;
@@ -27,10 +28,8 @@ class UserController extends Controller
     */
     public function index()
     {
-        $users = User::all();
-        return $this->successResponse($users);
+        return User::getAll();
     }
-
 
     /**
      * Create one new users
@@ -39,33 +38,74 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $rules = [
-            'lastName'  => 'required|max:254',
-            'firstName' => 'required|max:254',
-            'gender'    => 'required|max:20|in:male,female',
-            'country'   => 'required|max:254',
-            'password'  => 'required|max:254',
-            'email'     => 'required|email', 
-            'phone'     => 'required|max:254',
-        ];
+        return response()->json('$error', Response::HTTP_UNPROCESSABLE_ENTITY);
+        // Check if all fields are filled in
+        $validator = Validator::make($request->all(), [
+            'lastName'      => 'required|string|max:255',
+            'firstName'     => 'required|string|max:255',
+            'userName'      => 'required|string|max:255',
+            'gender'        => 'required|max:20|in:male,female',
+            'password'      => 'required|string|min:6|confirmed',
+            'email'         => 'string|email|max:255|unique:users', 
+            'phone',
+            'birthday',
+            'avatar', 
+            'level',
+            'type',
+            'currentSchool',
+        ]);
 
-        $this->validate($request, $rules);
+        //Returns an error if a field is not filled
+        if ($validator->fails()) {
+            $error = implode(", ", $validator->errors()->all());
+            return response()->json($error, Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
 
-        $user = User::create($request->all());
-
-        return $this->successResponse($user, Response::HTTP_CREATED);
+        return User::register($request);
     }
 
+    /**
+     * Log in the user
+     * 
+     * @param $request
+     * @return user
+     */
+    public function login(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'userName' => 'required|string|max:255',
+            'password' => 'required|string|min:6|confirmed',
+        ]);
+        if ($validator->fails())
+        {
+            $error = implode(", ", $validator->errors()->all());
+            return response()->json($error, Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+        
+        return User::login($request);
+    }
+
+    /**
+     * Log out the user
+     * 
+     * @param $request
+     */
+    public function logout(Request $request)
+    {
+        $token = $request->user()->token();
+        $token->revoke();
+        $response = ['message' => 'You have been successfully logged out!'];
+        return User::logout($request);
+    }
 
     /**
      * Show a specific user
      * @param user $user
      * @return Response
      */
-    public function show($user)
+    public function show($userId)
     {
-        $user = User::findOrFail($user);
-        return $this->successResponse($user);
+        return User::getById($userId);
     }
 
 
@@ -77,25 +117,30 @@ class UserController extends Controller
      */
     public function update(Request $request, $user)
     {
-        $rules = [
-            'lastName'  => 'required|max:254',
-            'firstName' => 'required|max:254',
-            'gender'    => 'required|max:20|in:male,female',
-            'country'   => 'required|max:254',
-            'password'  => 'required|max:254',
-            'email'     => 'required|email', 
-            'phone'     => 'required|max:254',
-        ];
-        $this->validate($request, $rules);
-        $user = User::findOrFail($user);
-        $user->fill($request->all());
-        if($user->isClean()){
-            return $this->errorResponse("Atleast one value must change", Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-        $user->save();
-        return $this->successResponse($user);
-    }
+        // Check if all fields are filled in
+        $validator = Validator::make($request->all(),[
+            'lastName'      => 'required|string|max:255',
+            'firstName'     => 'required|string|max:255',
+            'userName'      => 'required|max:254',
+            'gender'        => 'required|max:20|in:male,female',
+            'password'      => 'required|max:254',
+            'email', 
+            'phone',
+            'birthday',
+            'avatar', 
+            'level',
+            'type',
+            'currentSchool', 
+        ]);
 
+        //Returns an error if a field is not filled
+        if ($validator->fails()) {
+            $error = implode(", ", $validator->errors()->all());
+            return response()->json($error, Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        return User::renew($request, $user);
+    }
 
     /**
      * Delete user information
@@ -104,8 +149,6 @@ class UserController extends Controller
      */
     public function destroy($user)
     {
-        $user = User::findOrFail($user);
-        $user->delete();
-        return $this->successResponse($user);
+        return User::purge($user);
     }
 }

@@ -44,11 +44,19 @@ class UserService
     }
 
     /**
+     * 
+     */
+    public function login($request)
+    {
+        return $this->performRequest('POST', "/users/login", $request);
+    }
+
+    /**
      * Get a single user data
      */
     public function obtainuser($user)
     {
-        return $this->performRequest('GET', "/users/{$user}");
+        return $this->performRequest('GET', "/user/{$user}");
     }
 
     /**
@@ -56,7 +64,7 @@ class UserService
      */
     public function edituser($data, $user)
     {
-        return $this->performRequest('PUT', "/users/{$user}", $data);
+        return $this->performRequest('PUT', "/user/{$user}", $data);
     }
 
     /**
@@ -64,6 +72,6 @@ class UserService
      */
     public function deleteuser($user)
     {
-        return $this->performRequest('DELETE', "/users/{$user}");
+        return $this->performRequest('DELETE', "/user/{$user}");
     }
 }

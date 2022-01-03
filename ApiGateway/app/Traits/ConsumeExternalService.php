@@ -24,11 +24,17 @@ trait ConsumeExternalService
         {
             $headers['Authorization'] = $this->secret;
         }
-
+        
         $response = $client->request($method, $requestUrl, [
+            'debug' => fopen('php://stderr', 'w'),
             'form_params' => $formParams,
-            'headers'     => $headers,
+            'headers' => [
+                'Content-Type'  => 'application/json',
+                'Accept'        => 'application/json',
+                'Authorization' => $headers['Authorization'],
+            ]
         ]);
+        
         return $response->getBody()->getContents();
     }
 }
