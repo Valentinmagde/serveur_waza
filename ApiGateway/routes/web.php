@@ -20,16 +20,15 @@ $router->group(['prefix' => 'api'], function () use ($router) {
         $router->post('/', ['uses' => 'User\UserController@store']);
         $router->post('/login', ['uses' => 'User\UserController@login']);
         $router->post('/logout', ['uses' => 'User\UserController@logout']);
-        $router->get('/', ['uses' => 'User\UserController@index']);
     });
 
 });
 
 $router->group(['prefix' => 'api', 'middleware' => ['client.credentials']], function () use ($router) {
 
-    // $router->group(['prefix' => 'users'], function () use ($router) {
-    //     $router->get('/', ['uses' => 'User\UserController@index']);
-    // });
+    $router->group(['prefix' => 'users'], function () use ($router) {
+        $router->get('/', ['uses' => 'User\UserController@index']);
+    });
     
     $router->group(['prefix' => 'user'], function () use ($router) {
         $router->get('/{userId}', ['uses' => 'User\UserController@show']);

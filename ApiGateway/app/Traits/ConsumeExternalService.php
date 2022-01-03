@@ -27,7 +27,7 @@ trait ConsumeExternalService
         
         $response = $client->request($method, $requestUrl, [
             'debug' => fopen('php://stderr', 'w'),
-            'form_params' => $formParams,
+            'json' => $formParams,
             'headers' => [
                 'Content-Type'  => 'application/json',
                 'Accept'        => 'application/json',

@@ -32,7 +32,7 @@ class UserService
      */
     public function obtainusers()
     {
-        return $this->performRequest('GET', '/users');
+        return $this->performRequest('GET', 'api/users');
     }
 
     /**
@@ -40,7 +40,7 @@ class UserService
      */
     public function createuser($data)
     {
-        return $this->performRequest('POST', '/users', $data);
+        return $this->performRequest('POST', 'api/users', $data);
     }
 
     /**
@@ -48,7 +48,7 @@ class UserService
      */
     public function login($request)
     {
-        return $this->performRequest('POST', "/users/login", $request);
+        return $this->performRequest('POST', "api/users/login", $request);
     }
 
     /**
@@ -56,7 +56,7 @@ class UserService
      */
     public function obtainuser($user)
     {
-        return $this->performRequest('GET', "/user/{$user}");
+        return $this->performRequest('GET', "api/user/{$user}");
     }
 
     /**
@@ -64,7 +64,7 @@ class UserService
      */
     public function edituser($data, $user)
     {
-        return $this->performRequest('PUT', "/user/{$user}", $data);
+        return $this->performRequest('PUT', "api/user/{$user}", $data);
     }
 
     /**
@@ -72,6 +72,6 @@ class UserService
      */
     public function deleteuser($user)
     {
-        return $this->performRequest('DELETE', "/user/{$user}");
+        return $this->performRequest('DELETE', "api/user/{$user}");
     }
 }

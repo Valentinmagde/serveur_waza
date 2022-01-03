@@ -9,7 +9,7 @@ return [
 
     'guards' => [
         'api' => [
-            'driver' => 'keycloak',
+            'driver' => 'passport',
             'provider' => 'users',
         ],
     ],
