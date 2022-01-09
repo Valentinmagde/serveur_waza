@@ -57,7 +57,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
 });
 
 /**
- * All users endpoint
+ * All courses endpoint
  */
 $router->group(['prefix' => 'api'], function () use ($router) {
     $router->group(['middleware' => ['client.credentials']], function () use ($router) {
