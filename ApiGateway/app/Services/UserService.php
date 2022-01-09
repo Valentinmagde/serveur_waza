@@ -44,14 +44,6 @@ class UserService
     }
 
     /**
-     * 
-     */
-    public function login($request)
-    {
-        return $this->performRequest('POST', "api/users/login", $request);
-    }
-
-    /**
      * Get a single user data
      */
     public function obtainuser($user)

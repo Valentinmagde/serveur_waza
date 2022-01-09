@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Traits\ApiResponser;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Validator;
 
 
 class UserController extends Controller
@@ -38,21 +39,15 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        return response()->json('$error', Response::HTTP_UNPROCESSABLE_ENTITY);
         // Check if all fields are filled in
         $validator = Validator::make($request->all(), [
-            'lastName'      => 'required|string|max:255',
-            'firstName'     => 'required|string|max:255',
-            'userName'      => 'required|string|max:255',
+            'lastName'      => 'required|max:255',
+            'firstName'     => 'required|max:255',
+            'userName'      => 'required|unique:users|max:255',
             'gender'        => 'required|max:20|in:male,female',
-            'password'      => 'required|string|min:6|confirmed',
-            'email'         => 'string|email|max:255|unique:users', 
-            'phone',
-            'birthday',
-            'avatar', 
-            'level',
-            'type',
-            'currentSchool',
+            'password'      => 'required|min:6',
+            'type'          => 'required',
+            'email'         => 'string|email|max:255|unique:users',
         ]);
 
         //Returns an error if a field is not filled
@@ -74,7 +69,7 @@ class UserController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'userName' => 'required|string|max:255',
-            'password' => 'required|string|min:6|confirmed',
+            'password' => 'required|string|min:6',
         ]);
         if ($validator->fails())
         {
@@ -119,18 +114,13 @@ class UserController extends Controller
     {
         // Check if all fields are filled in
         $validator = Validator::make($request->all(),[
-            'lastName'      => 'required|string|max:255',
-            'firstName'     => 'required|string|max:255',
-            'userName'      => 'required|max:254',
+            'lastName'      => 'required|max:255',
+            'firstName'     => 'required|max:255',
+            'userName'      => 'required|unique:users|max:255',
             'gender'        => 'required|max:20|in:male,female',
-            'password'      => 'required|max:254',
-            'email', 
-            'phone',
-            'birthday',
-            'avatar', 
-            'level',
-            'type',
-            'currentSchool', 
+            'password'      => 'required|min:6',
+            'type'          => 'required',
+            'email'         => 'string|email|max:255|unique:users', 
         ]);
 
         //Returns an error if a field is not filled

@@ -23,7 +23,6 @@ class UserController extends Controller
         $this->userService = $userService;
     }
 
-
     /**
      * Get user data
      * @return \Illuminate\Http\JsonResponse
@@ -33,7 +32,6 @@ class UserController extends Controller
         return $this->successResponse($this->userService->obtainusers());
     }
 
-
     /**
      * Save an user data
      * @param Request $request
@@ -42,17 +40,6 @@ class UserController extends Controller
     public function store(Request $request)
     {
         return $this->successResponse($this->userService->createuser($request->all()));
-    }
-
-    /**
-     * Log in user
-     * 
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function login(Request $request)
-    {
-        return $this->successResponse($this->userService->login($request->all()));
     }
     
     /**

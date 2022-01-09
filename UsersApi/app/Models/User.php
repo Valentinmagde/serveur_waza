@@ -5,14 +5,15 @@ namespace App\Models;
 use Illuminate\Auth\Authenticatable;
 use Laravel\Lumen\Auth\Authorizable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Response;
+use App\Traits\ApiResponser;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 
 class User extends Model implements AuthenticatableContract, AuthorizableContract
 {
-    use Authenticatable, Authorizable;
-
+    use Authenticatable, Authorizable, ApiResponser;
     /**
      * The attributes that are mass assignable.
      *
@@ -21,6 +22,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     protected $fillable = [
         'lastName',
         'firstName',
+        'userName',
         'password',
         'gender',
         'email',
@@ -54,10 +56,10 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     {
         try {
             $user = User::find($userId);
-            return response()->json($user, Response::HTTP_OK);
+            return ApiResponser::successResponse($user, Response::HTTP_OK);
         } catch (\Exception $e) {
             $error = $e->getMessage();
-            return response()->json($error, Response::HTTP_INTERNAL_SERVER_ERROR);
+            return ApiResponser::successResponse($error, Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -68,10 +70,10 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     {
         try {
             $users = User::all();
-            return response()->json($users, Response::HTTP_OK);
+            return ApiResponser::successResponse($users, Response::HTTP_OK);
         } catch (\Exception $e) {
             $error = $e->getMessage();
-            return response()->json($error, Response::HTTP_INTERNAL_SERVER_ERROR);
+            return ApiResponser::successResponse($error, Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -85,17 +87,18 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     {
         try {
             $request['password']=Hash::make($request['password']);
-            $request['remember_token'] = Str::random(10);
+
+            if(!$request['email']){
+                $request['email'] = $request['userName'].'@gmail.com';
+            }
     
             // Persist user data in database
             $user = User::create($request->all());
 
-            $token = $user->createToken('Laravel Password Grant Client')->accessToken;
-            $response = ['token' => $token];
-            return response()->json($response, Response::HTTP_CREATED);
+            return ApiResponser::successResponse($response, Response::HTTP_CREATED);
         } catch (\Exception $e) {
             $error = $e->getMessage();
-            return response()->json($error, Response::HTTP_INTERNAL_SERVER_ERROR);
+            return ApiResponser::successResponse($error, Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -108,23 +111,23 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public static function login($request)
     {
         try {
-            $user = User::where('email', $request->userName)->orWhere('username', $request->userName)->first();
+            $user = User::where('email', $request->userName)->orWhere('userName', $request->userName)->first();
             if ($user) {
                 if (Hash::check($request->password, $user->password)) {
                     $token = $user->createToken('Laravel Password Grant Client')->accessToken;
                     $response = ['token' => $token];
-                    return response()->json($response, Response::HTTP_OK);
+                    return ApiResponser::successResponse($response, Response::HTTP_OK);
                 } else {
                     $response = ["message" => "Password mismatch"];
-                    return response()->json($response, Response::HTTP_UNPROCESSABLE_ENTITY);
+                    return ApiResponser::successResponse($response, Response::HTTP_UNPROCESSABLE_ENTITY);
                 }
             } else {
                 $response = ["message" =>'User does not exist'];
-                return response()->json($response, Response::HTTP_UNPROCESSABLE_ENTITY);
+                return ApiResponser::successResponse($response, Response::HTTP_UNPROCESSABLE_ENTITY);
             }
         }catch (\Exception $e) {
             $error = $e->getMessage();
-            return response()->json($error, Response::HTTP_INTERNAL_SERVER_ERROR);
+            return ApiResponser::successResponse($error, Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -139,10 +142,10 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             $token = $request->user()->token();
             $token->revoke();
             $response = ['message' => 'You have been successfully logged out!'];
-            return response()->json($response, Response::HTTP_OK);
+            return ApiResponser::successResponse($response, Response::HTTP_OK);
         }catch (\Exception $e) {
             $error = $e->getMessage();
-            return response()->json($error, Response::HTTP_INTERNAL_SERVER_ERROR);
+            return ApiResponser::successResponse($error, Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -158,13 +161,13 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             $user = User::find($userId);
             $user->fill($request->all());
             if($user->isClean()){
-                return $this->errorResponse("Atleast one value must change", Response::HTTP_UNPROCESSABLE_ENTITY);
+                return ApiResponser::errorResponse("Atleast one value must change", Response::HTTP_UNPROCESSABLE_ENTITY);
             }
             $user->save();
-            return response()->json($user, Response::HTTP_OK);
+            return $this->successResponse($user, Response::HTTP_OK);
         }catch (\Exception $e) {
             $error = $e->getMessage();
-            return response()->json($error, Response::HTTP_INTERNAL_SERVER_ERROR);
+            return ApiResponser::successResponse($error, Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -177,10 +180,10 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         try{
             $user = User::find($userId);
             $user->delete();
-            return response()->json($user, Response::HTTP_NO_CONTENT);
+            return ApiResponser::successResponse($user, Response::HTTP_NO_CONTENT);
         }catch (\Exception $e) {
             $error = $e->getMessage();
-            return response()->json($error, Response::HTTP_INTERNAL_SERVER_ERROR);
+            return ApiResponser::successResponse($error, Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 }

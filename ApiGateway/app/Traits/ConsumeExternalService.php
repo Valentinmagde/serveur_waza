@@ -3,6 +3,7 @@
 namespace App\Traits;
 
 use GuzzleHttp\Client;
+use Illuminate\Http\Response;
 
 trait ConsumeExternalService
 {
