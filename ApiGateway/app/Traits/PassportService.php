@@ -34,6 +34,7 @@ trait PassportService
             if ($user && Hash::check($formParams['password'], $user->password)) {
                 $response = $http->post(config('services.passport.login_endpoint'), array(
                     'form_params' => array(
+                        'debug' => fopen('php://stderr', 'w'),
                         'grant_type' => 'password',
                         'client_id' => config('services.passport.client_id'),
                         'client_secret' => config('services.passport.client_secret'),
