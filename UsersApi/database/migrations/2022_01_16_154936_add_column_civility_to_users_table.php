@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddForeignKeysToUsersTable extends Migration
+class AddColumnCivilityToUsersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,10 +14,7 @@ class AddForeignKeysToUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->integer('school_id')->unsigned()->nullable();
-            $table->foreign('school_id')
-                ->references('id')
-                ->on('schools')->onDelete('cascade');
+            $table->enum('civility', ['Célibataire', 'Marié', 'Séparé', 'Divorcé', 'Veuf ou veuve'])->default('Célibataire');
         });
     }
 
@@ -29,8 +26,7 @@ class AddForeignKeysToUsersTable extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropForeign('users_school_id_foreign');
-            $table->dropColumn('school_id');
+            $table->dropColumn('civility');
         });
     }
 }
