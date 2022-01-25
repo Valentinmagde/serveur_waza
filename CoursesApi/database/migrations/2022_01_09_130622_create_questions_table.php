@@ -18,10 +18,10 @@ class CreateQuestionsTable extends Migration
             $table->string('title')->nullable();
             $table->string('correctAnswer')->nullable();
             $table->float('point')->nullable();
-            $table->integer('section_id')->unsigned();
-            $table->foreign('section_id')
+            $table->integer('exam_id')->unsigned();
+            $table->foreign('exam_id')
                 ->references('id')
-                ->on('sections')->onDelete('cascade');
+                ->on('exams')->onDelete('cascade');
             $table->timestamps();
         });
     }
