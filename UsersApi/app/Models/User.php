@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\RolesHasUser;
 use Illuminate\Auth\Authenticatable;
 use Laravel\Lumen\Auth\Authorizable;
 use Illuminate\Database\Eloquent\Model;
@@ -31,7 +32,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'avatar',
         'level',
         'type',
-        'currentSchool'
+        'currentSchool',
+        'parentEmail'
     ];
 
     /**
@@ -94,6 +96,15 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     
             // Persist user data in database
             $user = User::create($request->all());
+            
+            $rol_id = 2;
+            if($request['level'] === 'ELEVE'){
+                $rol_id = 1;
+            }
+            $input['user_id'] = $user->id;
+            $input['role_id'] = $rol_id;
+
+            RolesHasUser::create($input);
 
             return response()->json($user, Response::HTTP_CREATED);
         } catch (\Exception $e) {

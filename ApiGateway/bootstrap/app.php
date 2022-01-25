@@ -67,12 +67,13 @@ $app->singleton(
 */
 
 // $app->middleware([
-//     App\Http\Middleware\ExampleMiddleware::class
+//     App\Http\Middleware\CorsMiddleware::class
 // ]);
 
  $app->routeMiddleware([
-//     'auth' => App\Http\Middleware\Authenticate::class,
-     'client.credentials' => \Laravel\Passport\Http\Middleware\CheckClientCredentials::class,
+    //'auth' => App\Http\Middleware\Authenticate::class,
+    'cors' => App\Http\Middleware\CorsMiddleware::class,
+    'client.credentials' => \Laravel\Passport\Http\Middleware\CheckClientCredentials::class,
  ]);
 
 /*

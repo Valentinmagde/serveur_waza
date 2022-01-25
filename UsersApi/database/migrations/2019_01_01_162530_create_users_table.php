@@ -25,7 +25,7 @@ class CreateUsersTable extends Migration
             $table->integer('birthday')->unsigned()->nullable();
             $table->string('avatar', 255)->nullable();
             $table->string('level', 255)->nullable();
-            $table->string('type', 255)->nullable();
+            $table->enum('type', ['PARENT', 'ELEVE', 'ADMINISTRATEUR'])->default('ELEVE');
             $table->string('currentSchool', 255)->nullable();
             $table->timestamps();
         });

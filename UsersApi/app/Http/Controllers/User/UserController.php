@@ -41,13 +41,10 @@ class UserController extends Controller
     {
         // Check if all fields are filled in
         $validator = Validator::make($request->all(), [
-            'lastName'      => 'required|max:255',
             'firstName'     => 'required|max:255',
             'userName'      => 'required|unique:users|max:255',
-            'gender'        => 'required|max:20|in:male,female',
             'password'      => 'required|min:6',
-            'type'          => 'required',
-            'email'         => 'string|email|max:255|unique:users',
+            'type'          => 'required'
         ]);
 
         //Returns an error if a field is not filled

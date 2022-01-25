@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddColumnCivilityToUsersTable extends Migration
+class AddForeignKeyParentToUsersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,10 @@ class AddColumnCivilityToUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->enum('civility', ['CELIBATAIRE', 'MARIE', 'SEPARE', 'DIVORCE', 'VEUF', 'VEUVE'])->default('CELIBATAIRE');
+            $table->integer('parent_id')->unsigned()->nullable();
+            $table->foreign('parent_id')
+                ->references('id')
+                ->on('users')->onDelete('cascade');
         });
     }
 
@@ -26,7 +29,8 @@ class AddColumnCivilityToUsersTable extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('civility');
+            $table->dropForeign('users_parent_id_foreign');
+            $table->dropColumn('parent_id');
         });
     }
 }

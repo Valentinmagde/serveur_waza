@@ -3,12 +3,14 @@
 namespace App\Traits;
 
 use GuzzleHttp\Client;
-use App\User;
 use App\Traits\ApiResponser;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+use App\Models\RolesHasUser;
+use App\Models\Roles;
 use App\Models\OauthRefreshToken;
 use App\Models\OauthAccessToken;
 
@@ -30,19 +32,34 @@ trait PassportService
         try {
 
             $user = User::where('userName', $formParams['userName'])->first();
+            $roleHasUser = RolesHasUser::where('user_id', $user->id)->first();
+            $role = null;
+            if($roleHasUser){
+               $role = Roles::find($roleHasUser->role_id); 
+            }
 
             if ($user && Hash::check($formParams['password'], $user->password)) {
-                $response = $http->post(config('services.passport.login_endpoint'), array(
-                    'form_params' => array(
-                        'debug' => fopen('php://stderr', 'w'),
+                $response = $http->post(config('services.passport.login_endpoint'), [
+                    'debug' => fopen('php://stderr', 'w'),
+                    'form_params' => [
                         'grant_type' => 'password',
                         'client_id' => config('services.passport.client_id'),
                         'client_secret' => config('services.passport.client_secret'),
                         'username' => $user->email,
                         'password' => $formParams['password']
-                    )
-                ));
-                return $response->getBody();
+                    ],
+                ]);
+
+                $donnees = json_decode($response->getBody(), true);
+                $data['access_token'] = $donnees['access_token'];
+                $data['refresh_token'] = $donnees['refresh_token'];
+                $data['token_type'] = $donnees['token_type'];
+                $data['expires_in'] = $donnees['expires_in'];
+                $data['user'] = $user;
+                $data['role'] = $role;
+                $success['data'] = $data;
+
+                return $success;
             } else {
                 abort(Response::HTTP_NOT_FOUND);
             }
@@ -55,7 +72,7 @@ trait PassportService
                 return $this->successResponse('Your credentials are incorrect. Please try again', $e->getCode());
             }
 
-            return $this->successResponse('Something went wrong on the server.', $e->getCode());
+            return $this->successResponse($e->getMessage(), $e->getCode());
         }
     }
 
