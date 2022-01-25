@@ -98,7 +98,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             $user = User::create($request->all());
             
             $rol_id = 2;
-            if($request['level'] === 'ELEVE'){
+            if($request['type'] === 'ELEVE'){
                 $rol_id = 1;
             }
             $input['user_id'] = $user->id;
