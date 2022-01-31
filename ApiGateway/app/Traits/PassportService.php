@@ -8,7 +8,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
-use App\Models\User;
+use App\Models\Users;
 use App\Models\RolesHasUser;
 use App\Models\Roles;
 use App\Models\OauthRefreshToken;
@@ -31,7 +31,7 @@ trait PassportService
 
         try {
 
-            $user = User::where('userName', $formParams['userName'])->first();
+            $user = Users::where('userName', $formParams['userName'])->first();
             $roleHasUser = RolesHasUser::where('user_id', $user->id)->first();
             $role = null;
             if($roleHasUser){

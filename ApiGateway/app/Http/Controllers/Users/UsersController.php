@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\User;
+namespace App\Http\Controllers\Users;
 
 use App\Http\Controllers\Controller;
 use App\Services\UserService;
@@ -8,7 +8,7 @@ use App\Traits\ApiResponser;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
-class UserController extends Controller
+class UsersController extends Controller
 {
     use ApiResponser;
 

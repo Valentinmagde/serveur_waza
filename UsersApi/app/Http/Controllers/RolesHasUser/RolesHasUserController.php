@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\RolesHasUser;
 
 use Illuminate\Http\Request;
 use App\Models\RoleHasUser;
 use Validator;
 
-class RoleHasUserController extends Controller
+class RolesHasUserController extends Controller
 {
     /** 
      * Create a memberHasUser api 

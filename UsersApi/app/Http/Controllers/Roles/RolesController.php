@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Roles;
 
 use App\CustomModels\RoleMethods;
 use App\CustomModels\UserMethods;

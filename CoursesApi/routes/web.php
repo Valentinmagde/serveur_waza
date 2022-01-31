@@ -11,6 +11,7 @@
 |
 */
 
+//Courses endpoints
 $router->group(['prefix' => 'api'], function () use ($router) {
 
     $router->group(['prefix' => 'courses'], function () use ($router) {

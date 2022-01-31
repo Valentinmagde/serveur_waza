@@ -7,11 +7,8 @@
 
 namespace App\Models;
 
-use Illuminate\Auth\Authenticatable;
-use Laravel\Lumen\Auth\Authorizable;
+use App\Models\Roles;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
-use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 
 /**
  * Class RoleHasUser
@@ -42,12 +39,12 @@ class RolesHasUser extends Model
 
 	public function role()
 	{
-		return $this->belongsTo(\App\Models\Role::class, 'role_id');
+		return $this->belongsTo(\App\Models\Roles::class, 'role_id');
 	}
 
 	public function user()
 	{
-		return $this->belongsTo(\App\Models\User::class, 'user_id');
+		return $this->belongsTo(\App\Models\Users::class, 'user_id');
 	}
 
 	public function privileges()
@@ -56,25 +53,40 @@ class RolesHasUser extends Model
 	}
 
     /** 
-     * Create a memberHasUser api 
+     * Create a roleHasUser api 
      * 
      * @return \Illuminate\Http\Response 
      */
-    public static function createRoleHasUser($request){
-        $input = $request->all(); 
+    public static function createRoleHasUser($user){ 
         try {
-            $member = RolesHasUser::create($input);
-            $success['status'] = 'OK'; 
-            $success['data'] =  $member;
+            $input = array();
+            $role = null;
+            switch ($user->type) {
+                case 'ELEVE':
+                    $role = Roles::getByTitle('Eleve');
+                    break;
+                case 'PARENT':
+                    $role = Roles::getByTitle('Parent');;
+                    break;
+                default:
+                    $role = Roles::getByTitle('Eleve');;
+                    break;
+            }
+            $input['user_id'] = $user->id;
+            $input['role_id'] = $role->id;
 
-            return response()->json($success,200); 
+            $roleHasUser = RolesHasUser::create($input);
+            $success['status'] = 'OK'; 
+            $success['data'] =  $roleHasUser;
+
+            return $success; 
         }
         catch(\Exception $e){
             $err['errNo'] = 11;
             $err['errMsg'] = $e->getMessage();
             $error['status'] = 'NOK';
             $error['data'] = $err;
-            return response()->json($error, 400);
+            return $error;
        }
     }
 }

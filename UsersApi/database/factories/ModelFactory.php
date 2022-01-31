@@ -11,7 +11,7 @@
 |
 */
 
-$factory->define(App\Models\User::class, function (Faker\Generator $faker) {
+$factory->define(App\Models\Users::class, function (Faker\Generator $faker) {
     return [
         'gender' => $gender = $faker->randomElement(['male', 'female']),
         'name' => $faker->name ($gender),

@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Http\Controllers\User;
+namespace App\Http\Controllers\Users;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
+use App\Models\Users;
 use App\Traits\ApiResponser;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
 
 
-class UserController extends Controller
+class UsersController extends Controller
 {
     use ApiResponser;
     /**
@@ -29,7 +29,7 @@ class UserController extends Controller
     */
     public function index()
     {
-        return User::getAll();
+        return Users::getAll();
     }
 
     /**
@@ -53,7 +53,7 @@ class UserController extends Controller
             return response()->json($error, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        return User::register($request);
+        return Users::register($request);
     }
 
     /**
@@ -74,7 +74,7 @@ class UserController extends Controller
             return response()->json($error, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
         
-        return User::login($request);
+        return Users::login($request);
     }
 
     /**
@@ -87,7 +87,7 @@ class UserController extends Controller
         $token = $request->user()->token();
         $token->revoke();
         $response = ['message' => 'You have been successfully logged out!'];
-        return User::logout($request);
+        return Users::logout($request);
     }
 
     /**
@@ -97,7 +97,7 @@ class UserController extends Controller
      */
     public function show($userId)
     {
-        return User::getById($userId);
+        return Users::getById($userId);
     }
 
 
@@ -126,7 +126,7 @@ class UserController extends Controller
             return response()->json($error, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        return User::renew($request, $user);
+        return Users::renew($request, $user);
     }
 
     /**
@@ -136,6 +136,6 @@ class UserController extends Controller
      */
     public function destroy($user)
     {
-        return User::purge($user);
+        return Users::purge($user);
     }
 }

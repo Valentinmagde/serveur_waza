@@ -2,11 +2,7 @@
 
 namespace App\Models;
 
-use Illuminate\Auth\Authenticatable;
-use Laravel\Lumen\Auth\Authorizable;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
-use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 
 class Roles extends Model
 {
@@ -24,7 +20,7 @@ class Roles extends Model
      */
     public function users()
     {
-        return $this->belongsToMany(User::class);
+        return $this->belongsToMany(Users::class);
     }
 
     /**
@@ -33,11 +29,25 @@ class Roles extends Model
     public static function getAll()
     {
         try {
-            $users = Role::all();
-            return response()->json($users, Response::HTTP_OK);
+            $roles = Roles::all();
+            return $roles;
         } catch (\Exception $e) {
             $error = $e->getMessage();
-            return response()->json($error, Response::HTTP_INTERNAL_SERVER_ERROR);
+            return $error;
+        }
+    }
+
+    /**
+     * Get role by title
+     */
+    public static function getByTitle($roleTitle)
+    {
+        try {
+            $role = Roles::where('title', $roleTitle)->first();
+            return $role;
+        } catch (\Exception $e) {
+            $error = $e->getMessage();
+            return $error;
         }
     }
 }

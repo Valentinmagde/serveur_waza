@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\Classes;
+use App\Models\Schools;
 use App\Models\RolesHasUser;
 use Illuminate\Auth\Authenticatable;
 use Laravel\Lumen\Auth\Authorizable;
@@ -12,7 +14,7 @@ use App\Traits\ApiResponser;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 
-class User extends Model implements AuthenticatableContract, AuthorizableContract
+class Users extends Model implements AuthenticatableContract, AuthorizableContract
 {
     use Authenticatable, Authorizable, ApiResponser;
     /**
@@ -30,10 +32,11 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'phone',
         'birthday',
         'avatar',
-        'level',
         'type',
-        'currentSchool',
-        'parentEmail'
+        'parentEmail',
+        'school_id',
+        'class_id',
+        'agreement'
     ];
 
     /**
@@ -41,9 +44,24 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      */
     public function roles()
     {
-        return $this->belongsToMany(Role::class);
+        return $this->belongsToMany(Roles::class);
     }
 
+    /**
+     * Get the class associated with the user.
+     */
+    public function class()
+    {
+        return $this->hasOne(Classes::class);
+    }
+
+    /**
+     * Get the school associated with the user.
+     */
+    public function school()
+    {
+        return $this->hasOne(Schools::class);
+    }
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
@@ -57,7 +75,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public static function getById($userId)
     {
         try {
-            $user = User::find($userId);
+            $user = Users::find($userId);
             return response()->json($user, Response::HTTP_OK);
         } catch (\Exception $e) {
             $error = $e->getMessage();
@@ -71,7 +89,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public static function getAll()
     {
         try {
-            $users = User::all();
+            $users = Users::all();
             return response()->json($users, Response::HTTP_OK);
         } catch (\Exception $e) {
             $error = $e->getMessage();
@@ -88,23 +106,31 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public static function register($request)
     {
         try {
+            // Encode the password
             $request['password']=Hash::make($request['password']);
 
+            // Create a random email if it does not exist
             if(!$request['email']){
-                $request['email'] = $request['userName'].'@gmail.com';
+                $request['email'] = strtolower($request['userName']).'@gmail.com';
             }
-    
-            // Persist user data in database
-            $user = User::create($request->all());
             
-            $rol_id = 2;
-            if($request['type'] === 'ELEVE'){
-                $rol_id = 1;
+            // Get the id of the class if it exists
+            if($request['level']){
+                $class = Classes::getByTitle($request['level']);
+                $request['class_id'] = $class->id;
             }
-            $input['user_id'] = $user->id;
-            $input['role_id'] = $rol_id;
 
-            RolesHasUser::create($input);
+            // Get the id of the school if it exists
+            if($request['currentSchool']){
+                $school = Schools::getByTitle($request['currentSchool']);
+                $request['school_id'] =$school->id;
+            }
+
+            // Persist user data in database
+            $user = Users::create($request->all());
+
+            // Associate the appropriate role with the new user
+            RolesHasUser::createRoleHasUser($user);
 
             return response()->json($user, Response::HTTP_CREATED);
         } catch (\Exception $e) {
@@ -122,7 +148,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public static function login($request)
     {
         try {
-            $user = User::where('email', $request->userName)->orWhere('userName', $request->userName)->first();
+            $user = Users::where('email', $request->userName)->orWhere('userName', $request->userName)->first();
             if ($user) {
                 if (Hash::check($request->password, $user->password)) {
                     $token = $user->createToken('Laravel Password Grant Client')->accessToken;
@@ -169,7 +195,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public static function renew($request, $userId)
     {
         try{
-            $user = User::find($userId);
+            $user = Users::find($userId);
             $user->fill($request->all());
             if($user->isClean()){
                 return ApiResponser::errorResponse("Atleast one value must change", Response::HTTP_UNPROCESSABLE_ENTITY);
@@ -189,7 +215,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public static function purge($userId)
     {
         try{
-            $user = User::find($userId);
+            $user = Users::find($userId);
             $user->delete();
             return response()->json($user, Response::HTTP_NO_CONTENT);
         }catch (\Exception $e) {
