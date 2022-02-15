@@ -7,6 +7,7 @@ use App\Models\Course;
 use App\Traits\ApiResponser;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Validator;
 
 
 class CourseController extends Controller
@@ -27,8 +28,8 @@ class CourseController extends Controller
      */
     public function index()
     {
-       $courses = Coure::all();
-       return $this->successResponse($courses);
+       $courses = Course::getAll();
+       return $this->successResponse($courses, Response::HTTP_OK);
     }
 
 
@@ -39,15 +40,20 @@ class CourseController extends Controller
      */
     public function store(Request $request)
     {
-        $rules = [
+        $validator = Validator::make($request->all(), [
             'chapterNumber'  =>  'required',
             'chapterTitle'   =>  'required',
             'content'        =>  'required',
             'level'          =>  'required|min:1',
-        ];
-        $this->validate($request, $rules);
+        ]);
 
-        $course = Course::create($request->all());
+        //Returns an error if a field is not filled
+        if ($validator->fails()) {
+            $error = implode(", ", $validator->errors()->all());
+            return response()->json($error, Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $course = Course::storeCourse($request);
 
         return $this->successResponse($course, Response::HTTP_CREATED);
     }

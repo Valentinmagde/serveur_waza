@@ -49,7 +49,7 @@ class CourseController extends Controller
      */
     public function store(Request $request)
     {
-        $this->userService->obtainuser($request->user_id);
+        // $this->userService->obtainuser($request->user_id);
         return $this->successResponse($this->courseService->createcourse($request->all()));
     }
 

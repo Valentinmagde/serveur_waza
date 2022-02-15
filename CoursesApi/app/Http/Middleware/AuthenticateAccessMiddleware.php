@@ -16,13 +16,26 @@ class AuthenticateAccessMiddleware
      */
     public function handle($request, Closure $next)
     {
-        // explode then check for the token if  token exists proceed or else abort
-        $validSecrets = explode(',', env('ACCEPTED_SECRETS'));
-        if(in_array($request->header('Authorization'), $validSecrets))
+        $headers = [
+            'Access-Control-Allow-Origin'      => '*',
+            'Access-Control-Allow-Methods'     => 'POST, GET, OPTIONS, PUT, DELETE',
+            'Access-Control-Allow-Credentials' => 'true',
+            'Access-Control-Max-Age'           => '86400',
+            'Access-Control-Allow-Headers'     => 'Content-Type, Authorization, X-Requested-With'
+        ];
+ 
+        if ($request->isMethod('OPTIONS'))
         {
-            return $next($request);
+            return response()->json('{"method":"OPTIONS"}', 200, $headers);
         }
-
-        abort(Response::HTTP_UNAUTHORIZED);
+ 
+        $response = $next($request);
+        foreach($headers as $key => $value)
+        {
+            $response->header($key, $value);
+        }
+ 
+        return $response;
+    
     }
 }

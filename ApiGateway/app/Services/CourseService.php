@@ -29,26 +29,26 @@ class CourseService
 
     public function obtaincourses()
     {
-        return $this->performRequest('GET', '/courses');
+        return $this->performRequest('GET', 'api/courses');
     }
 
     public function createcourse($data)
     {
-        return $this->performRequest('POST', '/courses', $data);
+        return $this->performRequest('POST', 'api/courses', $data);
     }
 
     public function obtaincourse($course)
     {
-        return $this->performRequest('GET', "/course/{$course}");
+        return $this->performRequest('GET', "api/course/{$course}");
     }
 
     public function editcourse($data, $course)
     {
-        return $this->performRequest('PUT', "/course/{$course}", $data);
+        return $this->performRequest('PUT', "api/course/{$course}", $data);
     }
 
     public function deletecourse($course)
     {
-        return $this->performRequest('DELETE', "/course/{$course}");
+        return $this->performRequest('DELETE', "api/course/{$course}");
     }
 }

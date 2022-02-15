@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Users;
+use App\Models\Classes;
+use App\Models\Schools;
 use App\Models\RolesHasUser;
 use App\Models\Roles;
 use App\Models\OauthRefreshToken;
@@ -34,8 +36,23 @@ trait PassportService
             $user = Users::where('userName', $formParams['userName'])->first();
             $roleHasUser = RolesHasUser::where('user_id', $user->id)->first();
             $role = null;
+            $class = null;
+            $school = null;
+
             if($roleHasUser){
                $role = Roles::find($roleHasUser->role_id); 
+            }
+
+            // Get user class and school
+            if($role && $role->title === 'Eleve'){
+                // Get the id of the class if it exists
+                $class = Classes::where('id', $user->class_id)->first();
+
+                // Get the id of the school if it exists
+                $school = Schools::where('id', $user->school_id)->first();
+                
+                $user->class = $class;
+                $user->school = $school;
             }
 
             if ($user && Hash::check($formParams['password'], $user->password)) {
@@ -50,13 +67,13 @@ trait PassportService
                     ],
                 ]);
 
+                $user->role = $role;
                 $donnees = json_decode($response->getBody(), true);
                 $data['access_token'] = $donnees['access_token'];
                 $data['refresh_token'] = $donnees['refresh_token'];
                 $data['token_type'] = $donnees['token_type'];
                 $data['expires_in'] = $donnees['expires_in'];
                 $data['user'] = $user;
-                $data['role'] = $role;
                 $success['data'] = $data;
 
                 return $success;
@@ -144,14 +161,30 @@ trait PassportService
         try{
             $user = Auth::user();
 
+            // Get user roles
             $roleHasUser = RolesHasUser::where('user_id', $user->id)->first();
             $role = null;
+            $class = null;
+            $school = null;
+
             if($roleHasUser){
                $role = Roles::find($roleHasUser->role_id); 
             }
 
+            // Get user class and school
+            if($role && $role->title === 'Eleve'){
+                // Get the id of the class if it exists
+                $class = Classes::where('id', $user->class_id)->first();
+
+                // Get the id of the school if it exists
+                $school = Schools::where('id', $user->school_id)->first();
+                
+                $user->class = $class;
+                $user->school = $school;
+            }
+
+            $user->role = $role;
             $data['user'] = $user;
-            $data['role'] = $role;
             $success['data'] = $data;
             return $success;
         }catch (\Exception $e) {

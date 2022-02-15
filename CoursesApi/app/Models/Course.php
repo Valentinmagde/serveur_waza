@@ -28,5 +28,56 @@ class Course extends Model
         'slug'
     ];
 
+    // -----------------------------------------------------------------------------------------------------
+    // @ Public methods
+    // -----------------------------------------------------------------------------------------------------
 
+    /**
+     * Get course by id
+     * 
+     * @param courseId
+     * @return course
+     */
+    public static function getById($courseId)
+    {
+        try {
+            $course = Courses::find($userId);
+            return $course;
+        } catch (\Exception $e) {
+            $error = $e->getMessage();
+            return $error;
+        }
+    }
+
+    /**
+     * Get all courses
+     */
+    public static function getAll()
+    {
+        try {
+            $courses = Course::all();
+            return $courses;
+        } catch (\Exception $e) {
+            $error = $e->getMessage();
+            return $error;
+        }
+    }
+
+    /**
+     * Store a course
+     * 
+     * @param course
+     * @return course
+     */
+    public static function storeCourse($request)
+    {
+        try {
+            // Persist course data in database
+            $course = Course::create($request->all());
+            return $course;
+        } catch (\Exception $e) {
+            $error = $e->getMessage();
+            return $error;
+        }
+    }
 }
