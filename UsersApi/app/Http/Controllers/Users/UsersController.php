@@ -44,7 +44,9 @@ class UsersController extends Controller
             'firstName'     => 'required|max:255',
             'userName'      => 'required|unique:users|max:255',
             'password'      => 'required|min:6',
-            'type'          => 'required'
+            'type'          => 'required',
+            'class_id'      => '',
+            'school_id'     => '',
         ]);
 
         //Returns an error if a field is not filled

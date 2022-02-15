@@ -40,9 +40,10 @@ class CourseController extends Controller
     public function store(Request $request)
     {
         $rules = [
-            'name'         =>  'required|max:255',
-            'chapter'   =>  'required',
-            'level'         =>  'required|min:1',
+            'chapterNumber'  =>  'required',
+            'chapterTitle'   =>  'required',
+            'content'        =>  'required',
+            'level'          =>  'required|min:1',
         ];
         $this->validate($request, $rules);
 

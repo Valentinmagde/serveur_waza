@@ -25,11 +25,25 @@ class Schools extends Model
      */
     public function user()
     {
-        return $this->belongsTo(Users::class);
+        return $this->hasOne(Users::class);
     }
 
     /**
-     * Get class by title
+     * Get school by id
+     */
+    public static function getById($schoolId)
+    {
+        try {
+            $school =Schools::find($schoolId);
+            return $school;
+        } catch (\Exception $e) {
+            $error = $e->getMessage();
+            return $error;
+        }
+    }
+
+    /**
+     * Get school by title
      */
     public static function getByTitle($schoolTitle)
     {

@@ -122,13 +122,41 @@ trait PassportService
     public function revokeToken()
     {
         try{
-            $token = Auth::user()->token()->delete();
+            $token = Auth::user()->token();
             $token->revoke();
-            $response = ['message' => 'You have been successfully logged out!'];
-            return $this->successResponse($response, Response::HTTP_OK);
+            $response['message'] = 'You have been successfully logged out!';
+            return $response;
         }catch (\Exception $e) {
             $error = $e->getMessage();
-            return $this->successResponse($error, Response::HTTP_INTERNAL_SERVER_ERROR);
+            return $error;
+        }
+    }
+
+     /**
+     * Get the current logged in user data
+     * 
+     * @param $request
+     * @param $requestUrl
+     * @return string
+     */
+    public function getUserLogged()
+    {
+        try{
+            $user = Auth::user();
+
+            $roleHasUser = RolesHasUser::where('user_id', $user->id)->first();
+            $role = null;
+            if($roleHasUser){
+               $role = Roles::find($roleHasUser->role_id); 
+            }
+
+            $data['user'] = $user;
+            $data['role'] = $role;
+            $success['data'] = $data;
+            return $success;
+        }catch (\Exception $e) {
+            $error = $e->getMessage();
+            return $error;
         }
     }
 }

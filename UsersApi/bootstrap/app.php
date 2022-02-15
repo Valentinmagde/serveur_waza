@@ -83,6 +83,27 @@ $app->singleton(
 // $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
 $app->register(Flipbox\LumenGenerator\LumenGeneratorServiceProvider::class);
+$app->register(\Illuminate\Mail\MailServiceProvider::class);
+
+
+/*
+|--------------------------------------------------------------------------
+| Registe the mailer and its aliases
+|--------------------------------------------------------------------------
+|
+| Next, we will register the mailer with the application. These can
+| be global mailer that run before and after each request into a
+| route or mailer that'll be assigned to some specific routes.
+|
+*/
+$app->configure('mail');
+
+$app->alias('mail.manager', Illuminate\Mail\MailManager::class);
+$app->alias('mail.manager', Illuminate\Contracts\Mail\Factory::class);
+
+$app->alias('mailer', Illuminate\Mail\Mailer::class);
+$app->alias('mailer', Illuminate\Contracts\Mail\Mailer::class);
+$app->alias('mailer', Illuminate\Contracts\Mail\MailQueue::class);
 
 /*
 |--------------------------------------------------------------------------

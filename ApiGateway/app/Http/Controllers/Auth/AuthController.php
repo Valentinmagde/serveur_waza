@@ -49,4 +49,13 @@ class AuthController extends Controller
     {
         return $this->successResponse($this->authService->revoke());
     }
+
+    /**
+     * Authenticated user
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function authenticatedUser()
+    {
+        return $this->successResponse($this->authService->currentLogged());
+    }
 }

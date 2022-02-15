@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Classes;
 use App\Models\Schools;
+use Illuminate\Http\Request;
 use App\Models\RolesHasUser;
 use Illuminate\Auth\Authenticatable;
 use Laravel\Lumen\Auth\Authorizable;
@@ -11,6 +12,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Response;
 use App\Traits\ApiResponser;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 
@@ -34,9 +37,9 @@ class Users extends Model implements AuthenticatableContract, AuthorizableContra
         'avatar',
         'type',
         'parentEmail',
-        'school_id',
+        'agreement',
         'class_id',
-        'agreement'
+        'school_id'
     ];
 
     /**
@@ -52,7 +55,7 @@ class Users extends Model implements AuthenticatableContract, AuthorizableContra
      */
     public function class()
     {
-        return $this->hasOne(Classes::class);
+        return $this->belongsTo(Classes::class);
     }
 
     /**
@@ -60,7 +63,7 @@ class Users extends Model implements AuthenticatableContract, AuthorizableContra
      */
     public function school()
     {
-        return $this->hasOne(Schools::class);
+        return $this->belongsTo(Schools::class);
     }
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
@@ -113,17 +116,18 @@ class Users extends Model implements AuthenticatableContract, AuthorizableContra
             if(!$request['email']){
                 $request['email'] = strtolower($request['userName']).'@gmail.com';
             }
-            
-            // Get the id of the class if it exists
-            if($request['level']){
-                $class = Classes::getByTitle($request['level']);
-                $request['class_id'] = $class->id;
-            }
 
-            // Get the id of the school if it exists
-            if($request['currentSchool']){
-                $school = Schools::getByTitle($request['currentSchool']);
-                $request['school_id'] =$school->id;
+            // Send an email to parent
+            if($request['parentEmail']){
+                $data = array(
+                    'body'=>"Votre enfant $request[firstName] vous invite à s'inscrire sur la plateforme wazala veuillez cliquez sur ce lien $request[url] pour vous inscrire",
+                    'to'=>$request['parentEmail']
+                );
+                Mail::raw($data['body'], function($message) use($data) {
+                    $message->to($data['to'], 'Tutorials Point')
+                    ->subject('Demande d\'inscription sur la plateforme wazala');
+                    $message->from('wazala.inc@gmail.com','Wazala.inc');
+                });
             }
 
             // Persist user data in database
@@ -131,6 +135,24 @@ class Users extends Model implements AuthenticatableContract, AuthorizableContra
 
             // Associate the appropriate role with the new user
             RolesHasUser::createRoleHasUser($user);
+
+            if($request['type'] === 'ELEVE'){
+                // Get the id of the class if it exists
+                $class = Classes::getById($request['level']);
+                if(!$class){
+                    return response()->json('The class does not exist', Response::HTTP_UNPROCESSABLE_ENTITY);
+                }
+
+                // Get the id of the school if it exists
+                $school = Schools::getById($request['currentSchool']);
+                if(!$school){
+                    return response()->json('The school does not exist', Response::HTTP_UNPROCESSABLE_ENTITY);
+                }
+                
+                $user->class()->associate($class);
+                $user->school()->associate($school);
+                $user->save();
+            }
 
             return response()->json($user, Response::HTTP_CREATED);
         } catch (\Exception $e) {

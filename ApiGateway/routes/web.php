@@ -28,7 +28,8 @@ $router->group(['middleware' => 'cors'], function () use ($router) {
             $router->post('/login', ['uses' => 'Auth\AuthController@login']);
             $router->group(['middleware' => ['client.credentials']], function () use ($router) {
                 $router->post('/refresh', ['uses' => 'Auth\AuthController@refreshToken']);
-                $router->post('/logout', ['uses' => 'Auth\AuthController@logout']);
+                $router->get('/logout', ['uses' => 'Auth\AuthController@logout']);
+                $router->get('/user/authenticated', ['uses' => 'Auth\AuthController@authenticatedUser']);
             });
         });
     });
@@ -78,13 +79,11 @@ $router->group(['middleware' => 'cors'], function () use ($router) {
      * All courses endpoint
      */
     $router->group(['prefix' => 'api'], function () use ($router) {
+        $router->group(['prefix' => 'courses'], function () use ($router) {
+            $router->get('/', ['uses' => 'Course\CourseController@index']);
+            $router->post('/', ['uses' => 'Course\CourseController@store']);
+        });
         $router->group(['middleware' => ['client.credentials']], function () use ($router) {
-
-            $router->group(['prefix' => 'courses'], function () use ($router) {
-                $router->get('/', ['uses' => 'Course\CourseController@index']);
-                $router->post('/', ['uses' => 'Course\CourseController@store']);
-            });
-            
             $router->group(['prefix' => 'course'], function () use ($router) {
                 $router->get('/{courseId}', ['uses' => 'Course\CourseController@show']);
                 $router->put('/{courseId}', ['uses' => 'Course\CourseController@update']);

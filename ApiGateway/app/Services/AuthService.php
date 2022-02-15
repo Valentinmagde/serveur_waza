@@ -37,6 +37,14 @@ class AuthService
     }
 
     /**
+     * Get the current logged in user data
+     */
+    public function currentLogged()
+    {
+        return $this->getUserLogged();
+    }
+
+    /**
      * Revoking the token
      */
     public function revoke()

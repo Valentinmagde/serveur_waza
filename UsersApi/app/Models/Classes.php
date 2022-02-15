@@ -23,9 +23,23 @@ class Classes extends Model
      */
     public function user()
     {
-        return $this->belongsTo(Users::class);
+        return $this->hasOne(Users::class);
     }
 
+
+    /**
+     * Get class by id
+     */
+    public static function getById($classId)
+    {
+        try {
+            $class = Classes::find($classId);
+            return $class;
+        } catch (\Exception $e) {
+            $error = $e->getMessage();
+            return $error;
+        }
+    }
     /**
      * Get class by title
      */
