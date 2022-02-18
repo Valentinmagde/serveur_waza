@@ -44,7 +44,8 @@ class CourseController extends Controller
             'chapterNumber'  =>  'required',
             'chapterTitle'   =>  'required',
             'content'        =>  'required',
-            'level'          =>  'required|min:1',
+            'level'          =>  'required',
+            'category_id'    =>  'required'
         ]);
 
         //Returns an error if a field is not filled

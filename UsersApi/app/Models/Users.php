@@ -138,13 +138,13 @@ class Users extends Model implements AuthenticatableContract, AuthorizableContra
 
             if($request['type'] === 'ELEVE'){
                 // Get the id of the class if it exists
-                $class = Classes::getById($request['level']);
+                $class = Classes::getById($request['class_id']);
                 if(!$class){
                     return response()->json('The class does not exist', Response::HTTP_UNPROCESSABLE_ENTITY);
                 }
 
                 // Get the id of the school if it exists
-                $school = Schools::getById($request['currentSchool']);
+                $school = Schools::getById($request['school_id']);
                 if(!$school){
                     return response()->json('The school does not exist', Response::HTTP_UNPROCESSABLE_ENTITY);
                 }

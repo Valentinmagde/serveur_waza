@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 
-class Course extends Model
+class Category extends Model
 {
 
     /**
@@ -17,16 +17,8 @@ class Course extends Model
      * @var array
      */
     protected $fillable = [ 
-        'chapter', 
-        'level',
-        'chapterNumber',
-        'chapterTitle',
-        'content',
-        'photo',
-        'relevant',
-        'overview',
-        'slug',
-        'category_id'
+        'title', 
+        'description'
     ];
 
     // -----------------------------------------------------------------------------------------------------
@@ -42,7 +34,7 @@ class Course extends Model
     public static function getById($courseId)
     {
         try {
-            $course = Courses::find($userId);
+            $course = Category::find($courseId);
             return $course;
         } catch (\Exception $e) {
             $error = $e->getMessage();
