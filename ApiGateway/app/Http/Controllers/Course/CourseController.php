@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\course;
+namespace App\Http\Controllers\Course;
 
 
 use App\Http\Controllers\Controller;
@@ -59,9 +59,9 @@ class CourseController extends Controller
      * @param $course
      * @return \Illuminate\Http\JsonResponse
      */
-    public function show($course)
+    public function show($courseId)
     {
-        return $this->successResponse($this->courseService->obtaincourse($course));
+        return $this->successResponse($this->courseService->obtaincourse($courseId));
     }
 
 
