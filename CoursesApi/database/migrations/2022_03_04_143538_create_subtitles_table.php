@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSommariesTable extends Migration
+class CreateSubtitlesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,14 @@ class CreateSommariesTable extends Migration
      */
     public function up()
     {
-        Schema::create('sommaries', function (Blueprint $table) {
+        Schema::create('subtitles', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('title')->nullable();
+            $table->longText('title')->nullable();
             $table->integer('hour')->default(0);
-            $table->integer('course_id')->unsigned();
-            $table->foreign('course_id')
+            $table->integer('sommary_id')->unsigned();
+            $table->foreign('sommary_id')
                 ->references('id')
-                ->on('courses')->onDelete('cascade');
+                ->on('sommaries')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -32,6 +32,6 @@ class CreateSommariesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('sommaries');
+        Schema::dropIfExists('subtitles');
     }
 }

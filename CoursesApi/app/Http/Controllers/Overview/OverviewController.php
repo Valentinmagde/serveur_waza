@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Http\Controllers\Course;
+namespace App\Http\Controllers\Overview;
 
 use App\Http\Controllers\Controller;
-use App\Models\Course;
+use App\Models\Overview;
 use App\Traits\ApiResponser;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
 
 
-class CourseController extends Controller
+class OverviewController extends Controller
 {
     use ApiResponser;
     /**
@@ -28,24 +28,21 @@ class CourseController extends Controller
      */
     public function index()
     {
-       $courses = Course::getAll();
-       return $this->successResponse($courses, Response::HTTP_OK);
+       $overviews = Overview::getAll();
+       return $this->successResponse($overviews, Response::HTTP_OK);
     }
 
 
     /**
-     * Store a single course information
+     * Store a single overview information
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'chapterNumber'  =>  'required',
-            'chapterTitle'   =>  'required',
-            'content'        =>  'required',
-            'level'          =>  'required',
-            'category_id'    =>  'required'
+            'description'  =>  'required',
+            'course_id'    =>  'required'
         ]);
 
         //Returns an error if a field is not filled
@@ -54,30 +51,30 @@ class CourseController extends Controller
             return response()->json($error, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        $course = Course::storeCourse($request);
+        $overview = Overview::storeOverview($request->all());
 
-        return $this->successResponse($course, Response::HTTP_CREATED);
+        return $this->successResponse($overview, Response::HTTP_CREATED);
     }
 
 
     /**
-     * Storing a single course data
+     * Storing a single overview data
      * @param $course
      * @return \Illuminate\Http\JsonResponse
      */
-    public function show($courseId)
+    public function show($overviewId)
     {
-        $course = Course::showCourse($courseId);
-        return $this->successResponse($course);
+        $overview = Overview::showOverview($overviewId);
+        return $this->successResponse($overview);
     }
 
 
     /**
      * @param Request $request
-     * @param $course
+     * @param $overview
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, $course)
+    public function update(Request $request, $overview)
     {
         $rules = [
             'name'         =>  'max:255',
@@ -85,25 +82,25 @@ class CourseController extends Controller
             'level'         =>  'min:1',
         ];
         $this->validate($request, $rules);
-        $course = Course::findOrFail($course);
-        $course->fill($request->all());
-        if($course->isClean()){
+        $overview = Overview::findOrFail($overview);
+        $overview->fill($request->all());
+        if($overview->isClean()){
             return $this->errorResponse("At least one value must change", Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-        $course->save();
-        return $this->successResponse($course);
+        $overview->save();
+        return $this->successResponse($overview);
     }
 
 
     /**
-     * Delete course information
-     * @param $course
+     * Delete overview information
+     * @param $overview
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy($course)
+    public function destroy($overview)
     {
-        $course = Course::findOrFail($course);
-        $course->delete();
-        return $this->successResponse($course);
+        $overview = Overview::findOrFail($overview);
+        $overview->delete();
+        return $this->successResponse($overview);
     }
 }

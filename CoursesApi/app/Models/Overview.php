@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 
-class Category extends Model
+class Overview extends Model
 {
 
     /**
@@ -17,32 +17,34 @@ class Category extends Model
      * @var array
      */
     protected $fillable = [ 
-        'title', 
-        'description'
+        'description',
+        'requirement',
+        'toLearn',
+        'course_id'
     ];
 
     /**
-     * Get the course that owns the category.
+     * Get the course that owns the overview.
      */
-    public function category()
+    public function course()
     {
-        return $this->hasOne(Course::class);
+        return $this->belongsTo(Course::class);
     }
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
 
     /**
-     * Get course by id
+     * Get overview by id
      * 
-     * @param courseId
-     * @return course
+     * @param overviewId
+     * @return overview
      */
     public static function getById($categoryId)
     {
         try {
-            $course = Category::find($categoryId);
-            return $course;
+            $overview = Overview::find($categoryId);
+            return $overview;
         } catch (\Exception $e) {
             $error = $e->getMessage();
             return $error;
@@ -50,13 +52,13 @@ class Category extends Model
     }
 
     /**
-     * Get all courses
+     * Get all overview
      */
     public static function getAll()
     {
         try {
-            $courses = Course::all();
-            return $courses;
+            $overviews = Overview::all();
+            return $overviews;
         } catch (\Exception $e) {
             $error = $e->getMessage();
             return $error;
@@ -64,17 +66,17 @@ class Category extends Model
     }
 
     /**
-     * Store a course
+     * Store an overview
      * 
-     * @param course
-     * @return course
+     * @param overview
+     * @return overview
      */
-    public static function storeCourse($request)
+    public static function storeOverview($data)
     {
         try {
-            // Persist course data in database
-            $course = Course::create($request->all());
-            return $course;
+            // Persist overview data in database
+            $overview = Overview::create($data);
+            return $overview;
         } catch (\Exception $e) {
             $error = $e->getMessage();
             return $error;

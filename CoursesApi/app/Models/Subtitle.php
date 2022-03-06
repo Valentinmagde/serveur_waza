@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 
-class Category extends Model
+class Subtitle extends Model
 {
 
     /**
@@ -17,17 +17,18 @@ class Category extends Model
      * @var array
      */
     protected $fillable = [ 
-        'title', 
-        'description'
+        'title',
+        'sommary_id' 
     ];
 
     /**
-     * Get the course that owns the category.
+     * Get the sommary that owns the subtile.
      */
-    public function category()
+    public function sommary()
     {
-        return $this->hasOne(Course::class);
+        return $this->belongsTo(Sommary::class);
     }
+
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
@@ -50,13 +51,13 @@ class Category extends Model
     }
 
     /**
-     * Get all courses
+     * Get all subtiles
      */
     public static function getAll()
     {
         try {
-            $courses = Course::all();
-            return $courses;
+            $subtitle = Subtile::all();
+            return $subtitle;
         } catch (\Exception $e) {
             $error = $e->getMessage();
             return $error;
@@ -64,17 +65,17 @@ class Category extends Model
     }
 
     /**
-     * Store a course
+     * Store a subtitle
      * 
-     * @param course
-     * @return course
+     * @param subtitle
+     * @return subtitle
      */
-    public static function storeCourse($request)
+    public static function storeSubtitle($request)
     {
         try {
-            // Persist course data in database
-            $course = Course::create($request->all());
-            return $course;
+            // Persist subtitle data in database
+            $subtitle = Subtitle::create($request);
+            return $subtitle;
         } catch (\Exception $e) {
             $error = $e->getMessage();
             return $error;

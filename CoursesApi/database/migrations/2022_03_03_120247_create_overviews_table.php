@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSommariesTable extends Migration
+class CreateOverviewsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,11 @@ class CreateSommariesTable extends Migration
      */
     public function up()
     {
-        Schema::create('sommaries', function (Blueprint $table) {
+        Schema::create('overviews', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('title')->nullable();
-            $table->integer('hour')->default(0);
+            $table->longText('description')->nullable();
+            $table->longText('requirement')->nullable();
+            $table->longText('toLearn')->nullable();
             $table->integer('course_id')->unsigned();
             $table->foreign('course_id')
                 ->references('id')
@@ -32,6 +33,6 @@ class CreateSommariesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('sommaries');
+        Schema::dropIfExists('overviews');
     }
 }
